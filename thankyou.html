@@ -5,7 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="robots" content="noindex,nofollow"/>
 <title>Thank You | Manipal University Jaipur Online MBA</title>
-<!-- Add your Meta Pixel / Google tag here and fire the Lead / conversion event on this page -->
+<!-- GTM: paste the Manipal Google Tag Manager code here (and keep the dataLayer line below) -->
+<script>window.dataLayer=window.dataLayer||[];</script>
+<script>
+/* Lead signal for GTM: pushed ONLY once, right after a successful form submission.
+   index.html sets 'lead_done' in sessionStorage; it is removed as soon as it is read, so a
+   refresh, back/forward visit or direct visit does not push the event again. */
+(function(){
+  var id=null;
+  try{ if(sessionStorage.getItem('lead_done')==='1'){ id=sessionStorage.getItem('lead_id')||'x'; sessionStorage.removeItem('lead_done'); sessionStorage.removeItem('lead_id'); } }catch(e){}
+  if(id){ window.dataLayer=window.dataLayer||[]; window.dataLayer.push({event:'lead_thankyou_view',lp:'manipal-online',event_id:id}); }
+})();
+</script>
 <style>
 :root{--orange:#f56620;--navy:#071943;--ink:#151923;--muted:#646b78;--line:#e8e5e0;--cream:#faf8f5;--yellow:#f5c94d;--green:#177b55}
 *{box-sizing:border-box}
