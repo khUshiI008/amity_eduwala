@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><!-- GTM: paste the Manipal Google Tag Manager code here (and keep the dataLayer line below) -->
-<script>window.dataLayer=window.dataLayer||[];</script>
+<html lang="en"><head><script>window.dataLayer=window.dataLayer||[];</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T9R75WW5');</script>
+<!-- End Google Tag Manager -->
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Manipal University Jaipur Online MBA | Free Consultation</title>
 <meta content="Advance your career with an Online MBA from Manipal University Jaipur. Explore the 2 EMI cashback offer and career support." name="description"/>
@@ -283,6 +289,9 @@ footer{background:#07132f!important;color:#c5cede!important;border-top:1px solid
 .otpm-l:disabled{color:#8795a5;text-decoration:none;cursor:default}
 </style>
 </head><body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T9R75WW5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <div class="topline">EARLY BIRD OFFER · 2 EMI CASHBACK ·</div>
 <header class="wrap"><div class="brand brand-centered"><img class="brand-logo" src="https://muj.onlinemanipal.com/wp-content/themes/mujonline/assets/images/logo.png" alt="Manipal University Jaipur" referrerpolicy="no-referrer" loading="eager"/></div></header>
 <main>
@@ -383,10 +392,16 @@ footer{background:#07132f!important;color:#c5cede!important;border-top:1px solid
  function sendOtp(m){
   if(st.busy)return Promise.resolve(false);
   st.busy=true;btn.disabled=true;btn.textContent='Sending OTP…';ui.r.disabled=true;
+  /* open the popup straight away so the visitor always sees something happening */
+  setStatus('');ui.inp.value='';setMsg('Sending OTP to '+mask(m)+'… please wait a few seconds.');openModal();
+  var slow=setTimeout(function(){if(st.busy)setMsg('Still sending… if a security check appears, please complete it.');},8000);
   return wSend('91'+m).then(function(r){
+   clearTimeout(slow);
    st.busy=false;btn.disabled=false;btn.textContent=btnLabel;
    if(r.ok){setStatus('');ui.inp.value='';setMsg('OTP sent to '+mask(m)+'. It is valid for 5 minutes.');openModal();startCool(30);return true;}
-   setStatus(r.error||'Could not send OTP. Please try again.',true);return false;
+   var err=r.error||'Could not send OTP. Please try again.';
+   setMsg(err,true);ui.r.disabled=false;ui.r.textContent='Resend OTP';st.cool=0;
+   setStatus(err,true);return false;
   });
  }
 
