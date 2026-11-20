@@ -287,6 +287,19 @@ footer{background:#07132f!important;color:#c5cede!important;border-top:1px solid
 .otpm-foot{display:flex;justify-content:space-between;margin-top:10px}
 .otpm-l{border:0;background:none;padding:0;color:#071943;font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer}
 .otpm-l:disabled{color:#8795a5;text-decoration:none;cursor:default}
+
+/* Lead form as popup modal + no sticky bottom bar */
+.sticky{display:none!important}
+@media(max-width:760px){body{padding-bottom:0!important}}
+html.lead-open,html.lead-open body{overflow:hidden}
+#lead.is-modal{position:fixed;inset:0;z-index:9000;margin:0;border:0;padding:24px 14px!important;background:rgba(7,25,67,.68)!important;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;animation:leadFade .18s ease-out}
+#lead.is-modal .form-wrap{position:relative;width:100%;max-width:560px;margin:auto;box-shadow:0 24px 70px rgba(0,0,0,.35);animation:leadUp .22s ease-out}
+.lead-x{display:none}
+#lead.is-modal .lead-x{display:grid;place-items:center;position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;border-radius:50%;background:#f1f3f6;color:#14243f;font-size:16px;line-height:1;cursor:pointer;z-index:2}
+#lead.is-modal .form-benefits{margin-top:18px}
+@keyframes leadFade{from{opacity:0}to{opacity:1}}
+@keyframes leadUp{from{transform:translateY(16px);opacity:.6}to{transform:none;opacity:1}}
+@media(max-width:760px){#lead.is-modal{padding:12px 10px!important}#lead.is-modal .form-wrap{padding:22px 14px 18px!important}}
 </style>
 </head><body>
 <!-- Google Tag Manager (noscript) -->
@@ -327,7 +340,7 @@ footer{background:#07132f!important;color:#c5cede!important;border-top:1px solid
 <div class="fee-row"><div><b>₹1,43,366*</b><span>Indicative effective fee after estimated cashback of ₹13,034 (2 × ₹6,517 EMI). Cashback amount and eligibility are subject to confirmation.</span></div><a class="btn" href="#lead">Learn More</a></div><p class="micro">*The prospectus lists the standard Indian programme fee as ₹1,84,000. Confirm the current discount, EMI and cashback terms before publishing. The prospectus overview page says 13 specialisations while detailed tables list 14; confirm the currently available list.</p></div></section>
 <section class="faq-section" id="faq"><div class="wrap"><div class="eyebrow">FREQUENTLY ASKED QUESTIONS</div><h2>Questions Before You Apply?</h2><p>A quick overview of the programme and the next steps.</p><div class="faq-list"><details class="faq-item"><summary>Are the programmes offered completely online?</summary><p>The programmes featured on this page are online programmes. Check the current programme page and academic calendar for the latest delivery, examination and learner-support details.</p></details><details class="faq-item"><summary>What is the duration of the Online MBA?</summary><p>The Online MBA is a two-year programme structured across four semesters.</p></details><details class="faq-item"><summary>What are the eligibility requirements?</summary><p>Applicants generally need a recognised bachelor's degree. Exact eligibility, minimum marks and accepted qualifications should be confirmed against the current admission guidelines for the programme you select.</p></details><details class="faq-item"><summary>Can I choose an MBA specialisation?</summary><p>Yes. The Online MBA offers multiple specialisation options. The currently available list may change, so confirm the active options with an authorised counsellor before applying.</p></details><details class="faq-item"><summary>Does the university provide placement support?</summary><p>Career support may include profile building, employability assessments, interview preparation, recruiter access and placement-related events. Placement assistance is not a guarantee of a job or salary outcome.</p></details><details class="faq-item"><summary>How do the fee, EMI and cashback offer work?</summary><p>Fees and payment plans can vary by admission cycle and offer eligibility. The two-EMI cashback promotion is subject to its current terms. Ask the admissions team to confirm the payable fee, EMI amount, cashback value and payout conditions in writing.</p></details></div></div></section><section class="final"><div class="wrap"><div class="eyebrow">YOUR NEXT CAREER MOVE STARTS HERE</div><h2>Build the Skills for Your Next Promotion.</h2><p>Explore the Online MBA from Manipal University Jaipur and understand the offer with a counsellor.</p><a class="btn" href="#lead">Get Free Career Counselling</a></div></section>
 </main><footer>Online Manipal · Manipal University Jaipur Online MBA · Programme details, placement statistics and promotional terms should be verified before publication.</footer>
-<div class="sticky"><a class="btn" href="#lead">Book Your Free Consultation</a></div>
+
 <div class="otpm" id="otpm" hidden role="dialog" aria-modal="true" aria-labelledby="otpm-t">
  <div class="otpm-card">
   <button type="button" class="otpm-x" id="otpm-x" aria-label="Close">&#10005;</button>
@@ -462,4 +475,42 @@ footer{background:#07132f!important;color:#c5cede!important;border-top:1px solid
  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ui.m.hidden)closeModal();});
  el('phone').addEventListener('input',function(){this.value=this.value.replace(/[^\d+\s-]/g,'').slice(0,14);});
 })();
-</script></body></html>
+</script><script>
+/* Open the lead form as a popup instead of scrolling to it */
+(function(){
+ var lead=document.getElementById('lead');if(!lead)return;
+ var card=lead.querySelector('.form-wrap')||lead.firstElementChild;
+ var x=document.createElement('button');x.type='button';x.className='lead-x';x.setAttribute('aria-label','Close');x.innerHTML='&#10005;';
+ card.insertBefore(x,card.firstChild);
+ var ph=null,last=null;
+ function isOpen(){return lead.classList.contains('is-modal');}
+ function open(){
+  if(isOpen())return;
+  last=document.activeElement;
+  ph=document.createElement('div');ph.style.height=lead.offsetHeight+'px';lead.parentNode.insertBefore(ph,lead);
+  lead.classList.add('is-modal');lead.setAttribute('role','dialog');lead.setAttribute('aria-modal','true');
+  document.documentElement.classList.add('lead-open');lead.scrollTop=0;
+  setTimeout(function(){var f=lead.querySelector('input[name="name"]');if(f){try{f.focus({preventScroll:true})}catch(e){f.focus()}}},80);
+  try{window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'lead_form_open'});}catch(e){}
+ }
+ function close(){
+  if(!isOpen())return;
+  lead.classList.remove('is-modal');lead.removeAttribute('role');lead.removeAttribute('aria-modal');
+  document.documentElement.classList.remove('lead-open');
+  if(ph){ph.parentNode.removeChild(ph);ph=null;}
+  if(last&&last.focus){try{last.focus({preventScroll:true})}catch(e){}}
+ }
+ document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href="#lead"]');
+  if(a){e.preventDefault();open();}
+ });
+ x.addEventListener('click',close);
+ lead.addEventListener('click',function(e){if(e.target===lead)close();});
+ document.addEventListener('keydown',function(e){
+  var otp=document.getElementById('otpm');
+  if(e.key==='Escape'&&isOpen()&&(!otp||otp.hidden))close();
+ },true);
+ window.openLeadForm=open;window.closeLeadForm=close;
+})();
+</script>
+</body></html>
