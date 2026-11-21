@@ -357,6 +357,7 @@ html.lead-open,html.lead-open body{overflow:hidden}
  var LP='manipal-online', THANK='thankyou.html';
  var OTP_LEN=4; /* must match "OTP length" in the MSG91 widget settings */
  var DUP_MSG='This mobile number is already registered with us. Our counsellor will contact you shortly.';
+ var BLOCK_DUPLICATES=false; /* TEMP for tracking tests: set back to true to block repeat mobile numbers again */
  var otpCfg={widgetId:'366b6e6f336e303830353332',tokenAuth:'590081TUBBrfKL6af884adP1',exposeMethods:true,success:function(){},failure:function(){}};
  (function load(urls){var i=0;(function next(){var sc=document.createElement('script');sc.src=urls[i];sc.async=true;
   sc.onload=function(){if(typeof window.initSendOTP==='function')window.initSendOTP(otpCfg)};
@@ -380,14 +381,14 @@ html.lead-open,html.lead-open body{overflow:hidden}
   try{window.verifyOtp(code,function(d){var t=d&&(d.message||d.token);t?res({ok:true,token:t}):res({ok:false,error:'Incorrect OTP.'})},function(e){res({ok:false,error:errText(e,'Incorrect OTP. Please check and try again.')})})}catch(x){res({ok:false,error:'Could not verify. Please try again.'})}});}
 
  /* ask the sheet script whether this number was already submitted (fails open if unreachable) */
- function checkDup(m){return fetch(URL_+'?check='+encodeURIComponent(m)+'&lp='+LP).then(function(r){return r.json()}).then(function(j){return !!(j&&j.duplicate)}).catch(function(){return false});}
+ function checkDup(m){if(!BLOCK_DUPLICATES)return Promise.resolve(false);return fetch(URL_+'?check='+encodeURIComponent(m)+'&lp='+LP).then(function(r){return r.json()}).then(function(j){return !!(j&&j.duplicate)}).catch(function(){return false});}
 
  function post(body){
   var opts={method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)};
   var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},10000)});
   return Promise.race([fetch(URL_,opts),timeout]).then(function(r){
    return r.json().then(function(j){
-    if(j&&j.duplicate)return {ok:false,duplicate:true,error:DUP_MSG};
+    if(j&&j.duplicate)return BLOCK_DUPLICATES?{ok:false,duplicate:true,error:DUP_MSG}:{ok:true};
     if(j&&j.ok===false)return {ok:false,error:j.error||'Something went wrong. Please try again.'};
     return {ok:true};
    },function(){return {ok:true}});
